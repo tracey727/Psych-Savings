@@ -139,7 +139,7 @@
       "phase": 10,
       "name": "Appointment Leakage & Refill",
       "green_gate": "Cancelled capacity can be tracked from vacancy to refill/no-refill and recovered value is auditable.",
-      "status": "pending"
+      "status": "green"
     },
     {
       "phase": 11,
