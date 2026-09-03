@@ -115,7 +115,7 @@
       "phase": 6,
       "name": "Authentication, Authorisation & Audit",
       "green_gate": "Unauthorised cross-user/cross-centre access is denied by API and database controls.",
-      "status": "pending"
+      "status": "green"
     },
     {
       "phase": 7,

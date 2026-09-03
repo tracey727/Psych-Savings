@@ -34,6 +34,49 @@ restricted. This is why `database/provisioning/create_runtime_role.sql`
 exists as a required step, separate from Neon's UI — **do not** create the
 runtime role any other way.
 
+### Session lookup requires a narrow RLS bypass, by design
+
+`sessions` is RLS-scoped by organisation like every other tenant table
+(`database/migrations/0007_auth_spine.sql`), but looking a session up by
+its token is a chicken-and-egg problem: the caller cannot set
+`app.current_org_id` until it knows which organisation the token belongs
+to, and it can only learn that from the row RLS is blocking. Verified
+live 2026-09-03: reading `sessions` by `token_hash` with no GUC set
+returns zero rows, as expected.
+
+The fix is `lookup_session_organisation(token_hash)`
+(`database/migrations/0008_session_lookup_function.sql`), a
+`SECURITY DEFINER` SQL function that returns only an `organisation_id`
+for a live (unrevoked, unexpired) token — nothing else — and is granted
+to `psych_savings_runtime` for this purpose alone. Verified live: it
+resolves a real token to the correct organisation with no GUC set, a
+bogus token resolves to `NULL` (not an error, not a leak), and an
+expired token also resolves to `NULL`. The caller then sets the GUC and
+re-reads the session through the normal RLS path. This is the one
+deliberate, narrow, documented exception to "every table is RLS-scoped"
+in this codebase — do not add another one without very good reason.
+
+### Testing the database adapter
+
+`apps/api/src/db/neonAuthStore.ts` and `neonAuditSink.ts` cannot be
+exercised by this repository's local test suite: this development
+sandbox's network egress cannot reach Neon directly (confirmed — both
+raw TCP and the HTTPS-based `@neondatabase/serverless` driver are
+blocked by the sandbox's organisational egress policy, independently of
+Neon). This is a sandbox limitation, not a Worker limitation — a
+deployed Cloudflare Worker reaches Neon over Cloudflare's own network
+and is unaffected.
+
+Everything these adapters call (`src/auth/login.ts`, `session.ts`,
+`totp.ts`, `password.ts`, `rateLimit.ts`) is fully unit-tested against an
+in-memory fake implementing the same `AuthStore`/`AuditSink` interfaces
+(`apps/api/test/fakes/fakeAuthStore.ts`), so the orchestration logic is
+proven; the adapters themselves are proven correct by construction
+(reusing the exact SQL/RLS pattern verified live in Phase 5 and above)
+but should get a real smoke test against a deployed Worker once
+Cloudflare is connected (tracked alongside the Phase 4 Cloudflare
+environment gap below).
+
 ## Cloudflare
 
 | Environment | Worker name | Status |

@@ -10,6 +10,10 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@neondatabase/serverless": "^0.10.3",
+    "@psych-savings/audit": "workspace:*",
+    "@psych-savings/permissions": "workspace:*",
+    "@psych-savings/shared-types": "workspace:*",
     "hono": "^4.6.9"
   },
   "devDependencies": {
