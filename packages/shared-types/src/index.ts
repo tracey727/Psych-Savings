@@ -38,3 +38,68 @@ export const ROLES = [
   "technical_admin",
 ] as const;
 export type Role = (typeof ROLES)[number];
+
+/**
+ * Staff-time waste categories, per CHRONOLOGICAL_BUILD_PLAN.md Phase 12
+ * item 2 and MODULE_REGISTER.md M05. Frozen: the savings engine has a
+ * formula per category, so an operator must not be able to invent one.
+ */
+export const WASTE_CATEGORIES = [
+  "duplicate_work",
+  "rework",
+  "searching",
+  "waiting",
+  "unnecessary_approval",
+  "wrong_role_work",
+  "avoidable_manual_entry",
+] as const;
+export type WasteCategory = (typeof WASTE_CATEGORIES)[number];
+
+/** Root causes a waste event can be attributed to during review (Phase 12 item 4). */
+export const ROOT_CAUSE_CATEGORIES = [
+  "no_single_source_of_truth",
+  "manual_process",
+  "unclear_ownership",
+  "system_limitation",
+  "training_gap",
+  "policy_or_approval_step",
+  "external_dependency",
+] as const;
+export type RootCauseCategory = (typeof ROOT_CAUSE_CATEGORIES)[number];
+
+/**
+ * How often a waste event or baseline repeats. Used to annualise a
+ * per-occurrence saving into a run-rate, which is always reported
+ * separately from verified actuals (SAVINGS_MEASUREMENT_CONTRACT.md
+ * "Dashboard totals").
+ */
+export const RECURRENCES = ["one_off", "daily", "weekly", "fortnightly", "monthly"] as const;
+export type Recurrence = (typeof RECURRENCES)[number];
+
+/**
+ * Occurrences per year for each recurrence. `daily` is 260 — working
+ * days, not calendar days — because this measures staff and practice
+ * activity, which does not happen at weekends. These are the only
+ * annualisation constants in the system; nothing else may hard-code a
+ * multiplier.
+ */
+export const OCCURRENCES_PER_YEAR: Record<Recurrence, number> = {
+  one_off: 1,
+  daily: 260,
+  weekly: 52,
+  fortnightly: 26,
+  monthly: 12,
+};
+
+/** The evidence hierarchy frozen in SAVINGS_MEASUREMENT_CONTRACT.md "Evidence hierarchy". */
+export const EVIDENCE_TYPES = [
+  "invoice",
+  "subscription_bill",
+  "appointment_outcome",
+  "booking_record",
+  "payment_record",
+  "measured_process_time",
+  "system_event",
+  "staffing_cost_baseline",
+] as const;
+export type EvidenceType = (typeof EVIDENCE_TYPES)[number];

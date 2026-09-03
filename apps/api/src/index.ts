@@ -9,6 +9,8 @@ import { SESSION_COOKIE_NAME } from "./middleware/auth";
 import { createAbsenceRoutes } from "./routes/absences";
 import { createAppointmentRoutes } from "./routes/appointments";
 import { createReferralRoutes } from "./routes/referrals";
+import { createSavingsRoutes } from "./routes/savings";
+import { createWasteRoutes } from "./routes/waste";
 import { createWorkItemRoutes } from "./routes/workItems";
 
 /**
@@ -156,5 +158,7 @@ app.route("/work-items", createWorkItemRoutes());
 app.route("/referrals", createReferralRoutes());
 app.route("/appointment-vacancies", createAppointmentRoutes());
 app.route("/absences", createAbsenceRoutes());
+app.route("/waste", createWasteRoutes());
+app.route("/savings", createSavingsRoutes());
 
 export default app;

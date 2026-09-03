@@ -32,6 +32,9 @@ importers:
       '@psych-savings/permissions':
         specifier: workspace:*
         version: link:../../packages/permissions
+      '@psych-savings/savings-engine':
+        specifier: workspace:*
+        version: link:../../packages/savings-engine
       '@psych-savings/shared-types':
         specifier: workspace:*
         version: link:../../packages/shared-types
@@ -66,6 +69,25 @@ importers:
 
   packages/permissions:
     dependencies:
+      '@psych-savings/shared-types':
+        specifier: workspace:*
+        version: link:../shared-types
+    devDependencies:
+      typescript:
+        specifier: ^5.6.3
+        version: 5.9.3
+      vitest:
+        specifier: ^2.1.4
+        version: 2.1.9(@types/node@26.4.1)
+
+  packages/savings-engine:
+    dependencies:
+      '@psych-savings/audit':
+        specifier: workspace:*
+        version: link:../audit
+      '@psych-savings/permissions':
+        specifier: workspace:*
+        version: link:../permissions
       '@psych-savings/shared-types':
         specifier: workspace:*
         version: link:../shared-types

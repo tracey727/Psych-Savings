@@ -1,6 +1,6 @@
 {
   "product": "Practice Savings & Revenue Protection Command",
-  "register_version": "0.1.0",
+  "register_version": "0.1.1",
   "last_updated": "2026-09-03",
   "beneficiary": "Irene / psychology practice",
   "purpose": "Reduce and prevent practice financial leakage from lost referrals, staff/admin time waste, appointment leakage, unclear responsibility, handover failure, under-used capacity and recurring operating waste.",
@@ -151,7 +151,7 @@
       "phase": 12,
       "name": "Staff Time Waste & Duplication",
       "green_gate": "At least one end-to-end synthetic waste case reaches Verified savings with evidence.",
-      "status": "pending"
+      "status": "green"
     },
     {
       "phase": 13,
