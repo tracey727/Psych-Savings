@@ -109,7 +109,7 @@
       "phase": 5,
       "name": "Authoritative Database Spine",
       "green_gate": "Fresh database can be created from migrations; tenant/role isolation tests pass.",
-      "status": "pending"
+      "status": "green"
     },
     {
       "phase": 6,

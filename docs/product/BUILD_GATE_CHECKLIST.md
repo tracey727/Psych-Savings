@@ -4,7 +4,7 @@
 - [x] **Phase 2 — Savings Measurement Contract** — GREEN only when: No savings can be counted without a calculation method, baseline and evidence rule.
 - [x] **Phase 3 — Information Architecture & Role Matrix** — GREEN only when: Role matrix approved; no role receives unnecessary access.
 - [ ] **Phase 4 — Repository & Environment Foundation** — GREEN only when: Clean install succeeds; CI passes; protected main exists; preview environment works with synthetic data.
-- [ ] **Phase 5 — Authoritative Database Spine** — GREEN only when: Fresh database can be created from migrations; tenant/role isolation tests pass.
+- [x] **Phase 5 — Authoritative Database Spine** — GREEN only when: Fresh database can be created from migrations; tenant/role isolation tests pass.
 - [ ] **Phase 6 — Authentication, Authorisation & Audit** — GREEN only when: Unauthorised cross-user/cross-centre access is denied by API and database controls.
 - [ ] **Phase 7 — Core Work Ownership Engine** — GREEN only when: An active item cannot silently lose ownership; overdue/transfer scenarios pass automated tests.
 - [ ] **Phase 8 — No Lost Referral™** — GREEN only when: Every synthetic referral is traceable from receipt to final outcome with no invisible state.
