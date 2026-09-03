@@ -127,7 +127,7 @@
       "phase": 8,
       "name": "No Lost Referral\u2122",
       "green_gate": "Every synthetic referral is traceable from receipt to final outcome with no invisible state.",
-      "status": "pending"
+      "status": "green"
     },
     {
       "phase": 9,

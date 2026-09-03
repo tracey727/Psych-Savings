@@ -9,6 +9,7 @@ import {
   rejectTransfer,
   reopenWorkItem,
   requestTransfer,
+  rescheduleWorkItem,
   resolveEscalation,
   WorkflowError,
 } from "../src/engine";
@@ -368,5 +369,62 @@ describe("close and reopen", () => {
         ["closed", "open"],
       ]),
     );
+  });
+});
+
+describe("rescheduleWorkItem", () => {
+  let store: FakeWorkItemStore;
+  let audit: InMemoryAuditSink;
+  let workItemId: string;
+
+  beforeEach(async () => {
+    store = new FakeWorkItemStore();
+    audit = new InMemoryAuditSink();
+    const item = await createWorkItem(store, audit, {
+      organisationId: ORG,
+      centreId: null,
+      domain: "referral",
+      title: "Test referral",
+      ownerUserId: OWNER,
+      priority: "normal",
+      dueAt: null,
+      nextAction: null,
+    });
+    workItemId = item.id;
+  });
+
+  it("updates the due date and recomputes health state (green -> amber)", async () => {
+    const soon = new Date(Date.now() + 60_000);
+    const updated = await rescheduleWorkItem(store, audit, {
+      workItemId,
+      organisationId: ORG,
+      actorUserId: OWNER,
+      dueAt: soon,
+      nextAction: "follow up call",
+      reason: "follow-up deadline set",
+    });
+    expect(updated.dueAt?.getTime()).toBe(soon.getTime());
+    expect(updated.nextAction).toBe("follow up call");
+    expect(updated.healthState).toBe("amber");
+    expect(audit.events.map((e) => e.action)).toContain("rescheduled");
+  });
+
+  it("updates the due date and recomputes health state (green -> red when overdue)", async () => {
+    const past = new Date(Date.now() - 60_000);
+    const updated = await rescheduleWorkItem(store, audit, {
+      workItemId,
+      organisationId: ORG,
+      actorUserId: OWNER,
+      dueAt: past,
+      reason: null,
+    });
+    expect(updated.healthState).toBe("red");
+  });
+
+  it("cannot reschedule a closed work item", async () => {
+    await closeWorkItem(store, audit, { workItemId, organisationId: ORG, actorUserId: OWNER, reason: "done" });
+    await expect(
+      rescheduleWorkItem(store, audit, { workItemId, organisationId: ORG, actorUserId: OWNER, dueAt: new Date(), reason: null }),
+    ).rejects.toThrow(WorkflowError);
   });
 });

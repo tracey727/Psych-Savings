@@ -282,6 +282,54 @@ export async function closeWorkItem(
   return updated;
 }
 
+/**
+ * Updates due date/priority/next action on an open item and recomputes
+ * health state accordingly (e.g. setting a near-term follow-up deadline
+ * can turn a Green item Amber immediately). This is what domain modules
+ * built on this engine (Phase 8+) call for things like "follow-up
+ * deadline" rather than writing to the work_items table directly.
+ */
+export async function rescheduleWorkItem(
+  store: WorkItemStore,
+  audit: AuditSink,
+  input: {
+    workItemId: string;
+    organisationId: string;
+    actorUserId: string;
+    dueAt?: Date | null;
+    priority?: WorkItem["priority"];
+    nextAction?: string | null;
+    reason: string | null;
+  },
+  now: Date = new Date(),
+): Promise<WorkItem> {
+  const item = await store.getWorkItem(input.workItemId, input.organisationId);
+  if (!item) throw new WorkflowError("work item not found");
+  if (item.status === "closed") throw new WorkflowError("cannot reschedule a closed work item");
+
+  const patch: Parameters<WorkItemStore["updateWorkItem"]>[2] = {};
+  if (input.dueAt !== undefined) patch.dueAt = input.dueAt;
+  if (input.priority !== undefined) patch.priority = input.priority;
+  if (input.nextAction !== undefined) patch.nextAction = input.nextAction;
+  const updated = await store.updateWorkItem(item.id, input.organisationId, patch);
+
+  await audit.write(
+    buildAuditEvent({
+      organisationId: input.organisationId,
+      actorUserId: input.actorUserId,
+      action: "rescheduled",
+      entityType: "work_item",
+      entityId: item.id,
+      priorState: { dueAt: item.dueAt, nextAction: item.nextAction },
+      newState: { dueAt: updated.dueAt, nextAction: updated.nextAction },
+      reason: input.reason,
+      source: "api",
+    }),
+  );
+
+  return recomputeHealth(store, updated, now, input.actorUserId, input.reason ?? "rescheduled");
+}
+
 export async function reopenWorkItem(
   store: WorkItemStore,
   audit: AuditSink,

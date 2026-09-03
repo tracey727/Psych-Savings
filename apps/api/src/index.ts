@@ -6,6 +6,7 @@ import { createSqlClient } from "./db/client";
 import { NeonAuditSink } from "./db/neonAuditSink";
 import { NeonAuthStore } from "./db/neonAuthStore";
 import { SESSION_COOKIE_NAME } from "./middleware/auth";
+import { createReferralRoutes } from "./routes/referrals";
 import { createWorkItemRoutes } from "./routes/workItems";
 
 /**
@@ -150,5 +151,6 @@ auth.post("/sign-out", async (c) => {
 
 app.route("/auth", auth);
 app.route("/work-items", createWorkItemRoutes());
+app.route("/referrals", createReferralRoutes());
 
 export default app;
