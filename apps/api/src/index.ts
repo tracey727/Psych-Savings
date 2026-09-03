@@ -6,6 +6,7 @@ import { createSqlClient } from "./db/client";
 import { NeonAuditSink } from "./db/neonAuditSink";
 import { NeonAuthStore } from "./db/neonAuthStore";
 import { SESSION_COOKIE_NAME } from "./middleware/auth";
+import { createWorkItemRoutes } from "./routes/workItems";
 
 /**
  * Business routes (referrals, work items, ...) are added from Phase 7/8
@@ -148,5 +149,6 @@ auth.post("/sign-out", async (c) => {
 });
 
 app.route("/auth", auth);
+app.route("/work-items", createWorkItemRoutes());
 
 export default app;

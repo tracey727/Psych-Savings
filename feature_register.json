@@ -121,7 +121,7 @@
       "phase": 7,
       "name": "Core Work Ownership Engine",
       "green_gate": "An active item cannot silently lose ownership; overdue/transfer scenarios pass automated tests.",
-      "status": "pending"
+      "status": "green"
     },
     {
       "phase": 8,
