@@ -1,17 +1,21 @@
+import { isOverdue } from "../../src/health";
 import type {
   CreateEscalationInput,
   CreateTransferInput,
   CreateWorkItemInput,
+  RecordEvidenceInput,
   StatusHistoryInput,
   WorkItemPatch,
+  WorkItemQueueFilters,
   WorkItemStore,
 } from "../../src/store";
-import type { Escalation, Transfer, WorkItem } from "../../src/types";
+import type { ActionEvidence, Escalation, Transfer, WorkItem, WorkloadEntry } from "../../src/types";
 
 export class FakeWorkItemStore implements WorkItemStore {
   workItems = new Map<string, WorkItem>();
   transfers = new Map<string, Transfer>();
   escalations = new Map<string, Escalation>();
+  evidence: ActionEvidence[] = [];
   ownerHistory: { workItemId: string; userId: string; assignedAt: Date; unassignedAt: Date | null }[] = [];
   statusHistory: StatusHistoryInput[] = [];
   private counter = 0;
@@ -121,5 +125,53 @@ export class FakeWorkItemStore implements WorkItemStore {
 
   async recordStatusHistory(input: StatusHistoryInput): Promise<void> {
     this.statusHistory.push(input);
+  }
+
+  async listWorkItems(organisationId: string, filters: WorkItemQueueFilters): Promise<WorkItem[]> {
+    return [...this.workItems.values()].filter((item) => {
+      if (item.organisationId !== organisationId) return false;
+      if (filters.domain !== undefined && item.domain !== filters.domain) return false;
+      if (filters.status !== undefined && item.status !== filters.status) return false;
+      if (filters.ownerUserId !== undefined && item.currentOwnerUserId !== filters.ownerUserId) return false;
+      if (filters.centreId !== undefined && item.centreId !== filters.centreId) return false;
+      return true;
+    });
+  }
+
+  async recordEvidence(input: RecordEvidenceInput): Promise<ActionEvidence> {
+    const record: ActionEvidence = {
+      id: this.nextId(),
+      organisationId: input.organisationId,
+      workItemId: input.workItemId,
+      evidenceType: input.evidenceType,
+      reference: input.reference,
+      note: input.note,
+      createdAt: new Date(),
+      createdByUserId: input.createdByUserId,
+    };
+    this.evidence.push(record);
+    return record;
+  }
+
+  async listEvidence(workItemId: string, organisationId: string): Promise<ActionEvidence[]> {
+    return this.evidence.filter((e) => e.workItemId === workItemId && e.organisationId === organisationId);
+  }
+
+  async getWorkloadSummary(organisationId: string, centreId: string | null): Promise<WorkloadEntry[]> {
+    const now = new Date();
+    const byUser = new Map<string, WorkloadEntry>();
+    for (const item of this.workItems.values()) {
+      if (item.organisationId !== organisationId || item.status !== "open") continue;
+      if (centreId !== null && item.centreId !== centreId) continue;
+      const entry = byUser.get(item.currentOwnerUserId) ?? {
+        userId: item.currentOwnerUserId,
+        openCount: 0,
+        overdueCount: 0,
+      };
+      entry.openCount++;
+      if (isOverdue(item.dueAt, now)) entry.overdueCount++;
+      byUser.set(item.currentOwnerUserId, entry);
+    }
+    return [...byUser.values()];
   }
 }

@@ -42,3 +42,24 @@ export interface Escalation {
   reason: string;
   resolvedAt: Date | null;
 }
+
+/** Generic "something happened on this item" record — action_evidence
+ *  from Phase 5, used by Phase 9 for contact-attempt history so a
+ *  reception callback doesn't need a bespoke table the way a referral's
+ *  richer outcome tracking did. */
+export interface ActionEvidence {
+  id: string;
+  organisationId: string;
+  workItemId: string;
+  evidenceType: string;
+  reference: string | null;
+  note: string | null;
+  createdAt: Date;
+  createdByUserId: string | null;
+}
+
+export interface WorkloadEntry {
+  userId: string;
+  openCount: number;
+  overdueCount: number;
+}

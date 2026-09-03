@@ -133,7 +133,7 @@
       "phase": 9,
       "name": "Reception Flow & Follow-up",
       "green_gate": "Reception can work from one authoritative queue and no synthetic callback disappears.",
-      "status": "pending"
+      "status": "green"
     },
     {
       "phase": 10,

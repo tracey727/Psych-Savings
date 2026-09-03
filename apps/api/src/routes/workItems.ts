@@ -4,6 +4,10 @@ import {
   closeWorkItem,
   createWorkItem,
   escalate,
+  getContactAttemptHistory,
+  getQueue,
+  getTeamWorkload,
+  recordContactAttempt,
   rejectTransfer,
   reopenWorkItem,
   requestTransfer,
@@ -77,12 +81,68 @@ export function createWorkItemRoutes() {
     return c.json({ workItem: item }, 201);
   });
 
+  // Phase 9 — the reception/callback queue is a filtered, sorted view
+  // over work_items (MODULE_REGISTER.md M02), not a separate resource.
+  // Registered before "/:id" so "queue"/"workload" are never swallowed
+  // by the :id param route.
+  app.get("/queue", requirePermission("work_items", "view"), async (c) => {
+    const auth = c.get("auth");
+    const domain = c.req.query("domain");
+    const items = await getQueue(c.get("workItemStore"), auth.organisationId, domain ? { domain } : {});
+    // assigned_centres roles only see their own centres' items — same
+    // rule assertCentreAccess enforces per-resource elsewhere, applied
+    // here as a filter over the whole queue.
+    const visible = items.filter((item) => assertCentreAccess(auth, "work_items", item.centreId));
+    return c.json({ queue: visible });
+  });
+
+  app.get("/workload", requirePermission("work_items", "view"), async (c) => {
+    const auth = c.get("auth");
+    const centreId = c.req.query("centreId") ?? null;
+    if (centreId !== null && !assertCentreAccess(auth, "work_items", centreId)) {
+      return c.json({ error: "forbidden_centre" }, 403);
+    }
+    const workload = await getTeamWorkload(c.get("workItemStore"), auth.organisationId, centreId);
+    return c.json({ workload });
+  });
+
   app.get("/:id", requirePermission("work_items", "view"), async (c) => {
     const auth = c.get("auth");
     const item = await c.get("workItemStore").getWorkItem(c.req.param("id"), auth.organisationId);
     if (!item) return c.json({ error: "not_found" }, 404);
     if (!assertCentreAccess(auth, "work_items", item.centreId)) return c.json({ error: "forbidden_centre" }, 403);
     return c.json({ workItem: item });
+  });
+
+  app.post("/:id/contact-attempts", requirePermission("work_items", "update"), async (c) => {
+    const auth = c.get("auth");
+    const store = c.get("workItemStore");
+    const item = await store.getWorkItem(c.req.param("id"), auth.organisationId);
+    if (!item) return c.json({ error: "not_found" }, 404);
+    if (!assertCentreAccess(auth, "work_items", item.centreId)) return c.json({ error: "forbidden_centre" }, 403);
+
+    const body = await c.req.json<{ outcome?: string; notes?: string | null }>();
+    if (!body.outcome) return c.json({ error: "outcome is required" }, 400);
+
+    const evidence = await recordContactAttempt(store, c.get("auditSink"), {
+      workItemId: item.id,
+      organisationId: auth.organisationId,
+      actorUserId: auth.userId,
+      outcome: body.outcome,
+      notes: body.notes ?? null,
+    });
+    return c.json({ contactAttempt: evidence }, 201);
+  });
+
+  app.get("/:id/contact-attempts", requirePermission("work_items", "view"), async (c) => {
+    const auth = c.get("auth");
+    const store = c.get("workItemStore");
+    const item = await store.getWorkItem(c.req.param("id"), auth.organisationId);
+    if (!item) return c.json({ error: "not_found" }, 404);
+    if (!assertCentreAccess(auth, "work_items", item.centreId)) return c.json({ error: "forbidden_centre" }, 403);
+
+    const history = await getContactAttemptHistory(store, item.id, auth.organisationId);
+    return c.json({ contactAttempts: history });
   });
 
   app.post("/:id/transfer", requirePermission("work_items", "transfer"), async (c) => {

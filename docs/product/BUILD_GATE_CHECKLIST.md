@@ -8,7 +8,7 @@
 - [x] **Phase 6 — Authentication, Authorisation & Audit** — GREEN only when: Unauthorised cross-user/cross-centre access is denied by API and database controls.
 - [x] **Phase 7 — Core Work Ownership Engine** — GREEN only when: An active item cannot silently lose ownership; overdue/transfer scenarios pass automated tests.
 - [x] **Phase 8 — No Lost Referral™** — GREEN only when: Every synthetic referral is traceable from receipt to final outcome with no invisible state.
-- [ ] **Phase 9 — Reception Flow & Follow-up** — GREEN only when: Reception can work from one authoritative queue and no synthetic callback disappears.
+- [x] **Phase 9 — Reception Flow & Follow-up** — GREEN only when: Reception can work from one authoritative queue and no synthetic callback disappears.
 - [ ] **Phase 10 — Appointment Leakage & Refill** — GREEN only when: Cancelled capacity can be tracked from vacancy to refill/no-refill and recovered value is auditable.
 - [ ] **Phase 11 — Leave, Handover & Absence Continuity** — GREEN only when: No active priority work is orphaned during synthetic leave/absence tests.
 - [ ] **Phase 12 — Staff Time Waste & Duplication** — GREEN only when: At least one end-to-end synthetic waste case reaches Verified savings with evidence.

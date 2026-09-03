@@ -1,14 +1,18 @@
 import type { NeonQueryFunction, NeonQueryFunctionInTransaction, NeonQueryInTransaction } from "@neondatabase/serverless";
 import type {
+  ActionEvidence,
   CreateEscalationInput,
   CreateTransferInput,
   CreateWorkItemInput,
   Escalation,
+  RecordEvidenceInput,
   StatusHistoryInput,
   Transfer,
   WorkItem,
   WorkItemPatch,
+  WorkItemQueueFilters,
   WorkItemStore,
+  WorkloadEntry,
 } from "@psych-savings/workflow-engine";
 
 type Sql = NeonQueryFunction<false, false>;
@@ -185,6 +189,74 @@ export class NeonWorkItemStore implements WorkItemStore {
            values (${input.organisationId}, ${input.workItemId}, ${input.changedByUserId}, ${input.fromHealthState}, ${input.toHealthState}, ${input.fromStatus}, ${input.toStatus}, ${input.reason})`,
     );
   }
+
+  // A NULL parameter means "no filter on this column" — avoids building
+  // SQL strings dynamically while still supporting optional filters in
+  // one parameterized query.
+  async listWorkItems(organisationId: string, filters: WorkItemQueueFilters): Promise<WorkItem[]> {
+    const [, rows] = await this.sql.transaction((tx) => [
+      tx`select set_config('app.current_org_id', ${organisationId}, true)`,
+      tx`select id, organisation_id, centre_id, domain, title, current_owner_user_id, priority, due_at, next_action, health_state, status, close_reason, created_at, updated_at, closed_at
+         from work_items
+         where organisation_id = ${organisationId}
+           and (${filters.domain ?? null}::text is null or domain = ${filters.domain ?? null})
+           and (${filters.status ?? null}::text is null or status = ${filters.status ?? null})
+           and (${filters.ownerUserId ?? null}::uuid is null or current_owner_user_id = ${filters.ownerUserId ?? null})
+           and (${filters.centreId ?? null}::uuid is null or centre_id = ${filters.centreId ?? null})`,
+    ]);
+    return (rows as Row[]).map(toWorkItem);
+  }
+
+  async recordEvidence(input: RecordEvidenceInput): Promise<ActionEvidence> {
+    const [, rows] = await this.sql.transaction((tx) => [
+      tx`select set_config('app.current_org_id', ${input.organisationId}, true)`,
+      tx`insert into action_evidence (organisation_id, work_item_id, evidence_type, reference, note, created_by_user_id)
+         values (${input.organisationId}, ${input.workItemId}, ${input.evidenceType}, ${input.reference}, ${input.note}, ${input.createdByUserId})
+         returning id, organisation_id, work_item_id, evidence_type, reference, note, created_at, created_by_user_id`,
+    ]);
+    return toActionEvidence((rows as Row[])[0]!);
+  }
+
+  async listEvidence(workItemId: string, organisationId: string): Promise<ActionEvidence[]> {
+    const [, rows] = await this.sql.transaction((tx) => [
+      tx`select set_config('app.current_org_id', ${organisationId}, true)`,
+      tx`select id, organisation_id, work_item_id, evidence_type, reference, note, created_at, created_by_user_id
+         from action_evidence where work_item_id = ${workItemId} and organisation_id = ${organisationId}
+         order by created_at asc`,
+    ]);
+    return (rows as Row[]).map(toActionEvidence);
+  }
+
+  async getWorkloadSummary(organisationId: string, centreId: string | null): Promise<WorkloadEntry[]> {
+    const [, rows] = await this.sql.transaction((tx) => [
+      tx`select set_config('app.current_org_id', ${organisationId}, true)`,
+      tx`select current_owner_user_id as user_id,
+                count(*)::int as open_count,
+                count(*) filter (where due_at is not null and due_at < now())::int as overdue_count
+         from work_items
+         where organisation_id = ${organisationId} and status = 'open'
+           and (${centreId}::uuid is null or centre_id = ${centreId})
+         group by current_owner_user_id`,
+    ]);
+    return (rows as Row[]).map((r) => ({
+      userId: r.user_id,
+      openCount: r.open_count,
+      overdueCount: r.overdue_count,
+    }));
+  }
+}
+
+function toActionEvidence(r: Row): ActionEvidence {
+  return {
+    id: r.id,
+    organisationId: r.organisation_id,
+    workItemId: r.work_item_id,
+    evidenceType: r.evidence_type,
+    reference: r.reference,
+    note: r.note,
+    createdAt: new Date(r.created_at),
+    createdByUserId: r.created_by_user_id,
+  };
 }
 
 function toWorkItem(r: Row): WorkItem {

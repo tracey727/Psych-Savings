@@ -1,5 +1,5 @@
 import type { HealthState } from "@psych-savings/shared-types";
-import type { Escalation, Priority, Transfer, WorkItem, WorkItemStatus } from "./types";
+import type { ActionEvidence, Escalation, Priority, Transfer, WorkItem, WorkItemStatus, WorkloadEntry } from "./types";
 
 export interface CreateWorkItemInput {
   organisationId: string;
@@ -49,6 +49,22 @@ export interface StatusHistoryInput {
   reason: string | null;
 }
 
+export interface WorkItemQueueFilters {
+  domain?: string;
+  status?: WorkItemStatus;
+  ownerUserId?: string;
+  centreId?: string;
+}
+
+export interface RecordEvidenceInput {
+  organisationId: string;
+  workItemId: string;
+  evidenceType: string;
+  reference: string | null;
+  note: string | null;
+  createdByUserId: string | null;
+}
+
 /**
  * Everything the work-ownership engine needs from the database, as an
  * interface — same pattern as apps/api/src/auth/store.ts. The engine
@@ -75,4 +91,11 @@ export interface WorkItemStore {
   resolveEscalation(id: string, organisationId: string, resolvedAt: Date): Promise<void>;
 
   recordStatusHistory(input: StatusHistoryInput): Promise<void>;
+
+  /** Phase 9: the reception/callback queue is a filtered, sorted view over this — not a separate table. */
+  listWorkItems(organisationId: string, filters: WorkItemQueueFilters): Promise<WorkItem[]>;
+  recordEvidence(input: RecordEvidenceInput): Promise<ActionEvidence>;
+  listEvidence(workItemId: string, organisationId: string): Promise<ActionEvidence[]>;
+  /** Aggregate counts only — no titles or details — per MODULE_REGISTER.md M02 "without exposing unnecessary sensitive content". */
+  getWorkloadSummary(organisationId: string, centreId: string | null): Promise<WorkloadEntry[]>;
 }
