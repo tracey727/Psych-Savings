@@ -145,7 +145,7 @@
       "phase": 11,
       "name": "Leave, Handover & Absence Continuity",
       "green_gate": "No active priority work is orphaned during synthetic leave/absence tests.",
-      "status": "pending"
+      "status": "green"
     },
     {
       "phase": 12,
