@@ -1,0 +1,24 @@
+# Build Gate Checklist
+- [x] **Phase 0 — Directive & IP Freeze** — GREEN only when: Signed/frozen product contract; no duplicate competing product; feature register versioned.
+- [x] **Phase 1 — Current-State Loss Map** — GREEN only when: Every target loss type has a defined current-state process, owner and measurable baseline.
+- [x] **Phase 2 — Savings Measurement Contract** — GREEN only when: No savings can be counted without a calculation method, baseline and evidence rule.
+- [x] **Phase 3 — Information Architecture & Role Matrix** — GREEN only when: Role matrix approved; no role receives unnecessary access.
+- [ ] **Phase 4 — Repository & Environment Foundation** — GREEN only when: Clean install succeeds; CI passes; protected main exists; preview environment works with synthetic data.
+- [ ] **Phase 5 — Authoritative Database Spine** — GREEN only when: Fresh database can be created from migrations; tenant/role isolation tests pass.
+- [ ] **Phase 6 — Authentication, Authorisation & Audit** — GREEN only when: Unauthorised cross-user/cross-centre access is denied by API and database controls.
+- [ ] **Phase 7 — Core Work Ownership Engine** — GREEN only when: An active item cannot silently lose ownership; overdue/transfer scenarios pass automated tests.
+- [ ] **Phase 8 — No Lost Referral™** — GREEN only when: Every synthetic referral is traceable from receipt to final outcome with no invisible state.
+- [ ] **Phase 9 — Reception Flow & Follow-up** — GREEN only when: Reception can work from one authoritative queue and no synthetic callback disappears.
+- [ ] **Phase 10 — Appointment Leakage & Refill** — GREEN only when: Cancelled capacity can be tracked from vacancy to refill/no-refill and recovered value is auditable.
+- [ ] **Phase 11 — Leave, Handover & Absence Continuity** — GREEN only when: No active priority work is orphaned during synthetic leave/absence tests.
+- [ ] **Phase 12 — Staff Time Waste & Duplication** — GREEN only when: At least one end-to-end synthetic waste case reaches Verified savings with evidence.
+- [ ] **Phase 13 — Capacity & Utilisation** — GREEN only when: Capacity metrics reconcile to synthetic source data and do not misclassify approved/non-working time.
+- [ ] **Phase 14 — Recurring Cost & Supplier Waste** — GREEN only when: Annualised cost reductions are derived from recorded before/after values and evidence.
+- [ ] **Phase 15 — Systemic Pattern, Waste & Prevention Command** — GREEN only when: Repeated synthetic events can be grouped, corrected and measured without corrupting individual event history.
+- [ ] **Phase 16 — Verified Savings Ledger** — GREEN only when: Dashboard total can be reconstructed from underlying verified cases.
+- [ ] **Phase 17 — Irene Director Command Dashboard** — GREEN only when: Every headline number is traceable; no dashboard value is a disconnected calculation.
+- [ ] **Phase 18 — Alerts, Notifications & Accountability** — GREEN only when: Critical synthetic events alert the correct role once, escalate correctly and remain auditable.
+- [ ] **Phase 19 — Full Regression, Security, Load & UAT** — GREEN only when: No critical/high defects; all core workflows GREEN; UAT sign-off recorded.
+- [ ] **Phase 20 — Production Deployment & Controlled Pilot** — GREEN only when: Production environment healthy; pilot access controlled; monitoring and rollback ready.
+- [ ] **Phase 21 — Baseline Period & First Verified Savings** — GREEN only when: First verified savings cases completed without double-counting or unsupported assumptions.
+- [ ] **Phase 22 — Scale, Optimise & Prevent** — GREEN only when: System operates as a continuous prevention and savings-control cycle, not a one-off audit.

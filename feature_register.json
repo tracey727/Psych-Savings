@@ -1,0 +1,217 @@
+{
+  "product": "Practice Savings & Revenue Protection Command",
+  "register_version": "0.1.0",
+  "last_updated": "2026-09-03",
+  "beneficiary": "Irene / psychology practice",
+  "purpose": "Reduce and prevent practice financial leakage from lost referrals, staff/admin time waste, appointment leakage, unclear responsibility, handover failure, under-used capacity and recurring operating waste.",
+  "health_states": [
+    "Green",
+    "Amber/Yellow",
+    "Red",
+    "Recovery"
+  ],
+  "savings_states": [
+    "Potential",
+    "Approved",
+    "Implemented",
+    "Measured",
+    "Verified"
+  ],
+  "platform": [
+    "GitHub",
+    "Cloudflare",
+    "Neon"
+  ],
+  "modules": [
+    {
+      "id": "M01",
+      "name": "No Lost Referral",
+      "priority": "core"
+    },
+    {
+      "id": "M02",
+      "name": "Reception Flow & Follow-up",
+      "priority": "core"
+    },
+    {
+      "id": "M03",
+      "name": "Appointment Leakage & Refill",
+      "priority": "core"
+    },
+    {
+      "id": "M04",
+      "name": "No-Lost-Responsibility / Work Ownership",
+      "priority": "foundation"
+    },
+    {
+      "id": "M05",
+      "name": "Staff Time Waste & Duplication Detection",
+      "priority": "core"
+    },
+    {
+      "id": "M06",
+      "name": "Leave, Handover & Absence Continuity",
+      "priority": "core"
+    },
+    {
+      "id": "M07",
+      "name": "Capacity & Utilisation",
+      "priority": "core"
+    },
+    {
+      "id": "M08",
+      "name": "Recurring Cost / Supplier Waste Review",
+      "priority": "secondary"
+    },
+    {
+      "id": "M09",
+      "name": "Systemic Pattern, Waste & Prevention Command",
+      "priority": "core"
+    },
+    {
+      "id": "M10",
+      "name": "Verified Savings Ledger & Director Dashboard",
+      "priority": "core"
+    }
+  ],
+  "build_phases": [
+    {
+      "phase": 0,
+      "name": "Directive & IP Freeze",
+      "green_gate": "Signed/frozen product contract; no duplicate competing product; feature register versioned.",
+      "status": "green"
+    },
+    {
+      "phase": 1,
+      "name": "Current-State Loss Map",
+      "green_gate": "Every target loss type has a defined current-state process, owner and measurable baseline.",
+      "status": "green"
+    },
+    {
+      "phase": 2,
+      "name": "Savings Measurement Contract",
+      "green_gate": "No savings can be counted without a calculation method, baseline and evidence rule.",
+      "status": "green"
+    },
+    {
+      "phase": 3,
+      "name": "Information Architecture & Role Matrix",
+      "green_gate": "Role matrix approved; no role receives unnecessary access.",
+      "status": "green"
+    },
+    {
+      "phase": 4,
+      "name": "Repository & Environment Foundation",
+      "green_gate": "Clean install succeeds; CI passes; protected main exists; preview environment works with synthetic data.",
+      "status": "in_progress"
+    },
+    {
+      "phase": 5,
+      "name": "Authoritative Database Spine",
+      "green_gate": "Fresh database can be created from migrations; tenant/role isolation tests pass.",
+      "status": "pending"
+    },
+    {
+      "phase": 6,
+      "name": "Authentication, Authorisation & Audit",
+      "green_gate": "Unauthorised cross-user/cross-centre access is denied by API and database controls.",
+      "status": "pending"
+    },
+    {
+      "phase": 7,
+      "name": "Core Work Ownership Engine",
+      "green_gate": "An active item cannot silently lose ownership; overdue/transfer scenarios pass automated tests.",
+      "status": "pending"
+    },
+    {
+      "phase": 8,
+      "name": "No Lost Referral\u2122",
+      "green_gate": "Every synthetic referral is traceable from receipt to final outcome with no invisible state.",
+      "status": "pending"
+    },
+    {
+      "phase": 9,
+      "name": "Reception Flow & Follow-up",
+      "green_gate": "Reception can work from one authoritative queue and no synthetic callback disappears.",
+      "status": "pending"
+    },
+    {
+      "phase": 10,
+      "name": "Appointment Leakage & Refill",
+      "green_gate": "Cancelled capacity can be tracked from vacancy to refill/no-refill and recovered value is auditable.",
+      "status": "pending"
+    },
+    {
+      "phase": 11,
+      "name": "Leave, Handover & Absence Continuity",
+      "green_gate": "No active priority work is orphaned during synthetic leave/absence tests.",
+      "status": "pending"
+    },
+    {
+      "phase": 12,
+      "name": "Staff Time Waste & Duplication",
+      "green_gate": "At least one end-to-end synthetic waste case reaches Verified savings with evidence.",
+      "status": "pending"
+    },
+    {
+      "phase": 13,
+      "name": "Capacity & Utilisation",
+      "green_gate": "Capacity metrics reconcile to synthetic source data and do not misclassify approved/non-working time.",
+      "status": "pending"
+    },
+    {
+      "phase": 14,
+      "name": "Recurring Cost & Supplier Waste",
+      "green_gate": "Annualised cost reductions are derived from recorded before/after values and evidence.",
+      "status": "pending"
+    },
+    {
+      "phase": 15,
+      "name": "Systemic Pattern, Waste & Prevention Command",
+      "green_gate": "Repeated synthetic events can be grouped, corrected and measured without corrupting individual event history.",
+      "status": "pending"
+    },
+    {
+      "phase": 16,
+      "name": "Verified Savings Ledger",
+      "green_gate": "Dashboard total can be reconstructed from underlying verified cases.",
+      "status": "pending"
+    },
+    {
+      "phase": 17,
+      "name": "Irene Director Command Dashboard",
+      "green_gate": "Every headline number is traceable; no dashboard value is a disconnected calculation.",
+      "status": "pending"
+    },
+    {
+      "phase": 18,
+      "name": "Alerts, Notifications & Accountability",
+      "green_gate": "Critical synthetic events alert the correct role once, escalate correctly and remain auditable.",
+      "status": "pending"
+    },
+    {
+      "phase": 19,
+      "name": "Full Regression, Security, Load & UAT",
+      "green_gate": "No critical/high defects; all core workflows GREEN; UAT sign-off recorded.",
+      "status": "pending"
+    },
+    {
+      "phase": 20,
+      "name": "Production Deployment & Controlled Pilot",
+      "green_gate": "Production environment healthy; pilot access controlled; monitoring and rollback ready.",
+      "status": "pending"
+    },
+    {
+      "phase": 21,
+      "name": "Baseline Period & First Verified Savings",
+      "green_gate": "First verified savings cases completed without double-counting or unsupported assumptions.",
+      "status": "pending"
+    },
+    {
+      "phase": 22,
+      "name": "Scale, Optimise & Prevent",
+      "green_gate": "System operates as a continuous prevention and savings-control cycle, not a one-off audit.",
+      "status": "pending"
+    }
+  ]
+}

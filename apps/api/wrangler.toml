@@ -1,0 +1,25 @@
+name = "psych-savings-api"
+main = "src/index.ts"
+compatibility_date = "2024-11-01"
+compatibility_flags = ["nodejs_compat"]
+
+# Least-privilege rule: this Worker must only ever be bound to the
+# least-privilege Neon runtime role/connection string, never an owner
+# credential. See docs/security/SECRETS_POLICY.md and
+# docs/product/DIRECTIVE_FREEZE.md §7.
+#
+# DATABASE_URL is set as a Cloudflare secret per environment
+# (`wrangler secret put DATABASE_URL --env development|preview|production`)
+# and is never committed to source control.
+
+[env.development]
+name = "psych-savings-api-dev"
+vars = { ENVIRONMENT = "development" }
+
+[env.preview]
+name = "psych-savings-api-preview"
+vars = { ENVIRONMENT = "preview" }
+
+[env.production]
+name = "psych-savings-api-production"
+vars = { ENVIRONMENT = "production" }
